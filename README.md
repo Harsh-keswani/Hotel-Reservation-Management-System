@@ -1,0 +1,2 @@
+# Hotel-Reservation-Management-System
+This Project is a Hotel Reservation Management System which works very similar to how an usual Hotel Reservation Management System works like and this projects just hints us about the future where such platforms can also be used for making not just reservation systems but also various other systems like Airlines Booking, Library management system, data management systems and many more. This Project was created with Python at the Front End and MySQL database management system at the back end.
