@@ -1,0 +1,367 @@
+def check_in():
+#Function to Check-In to Hotel
+#A brief introduction of our hotel Sea Breeze
+    print("""  ...............................................................................................................
+ 
+  ***************************************************************************************************************
+ 
+                                WELCOME TO SEA BREEZE RESERVATION SYSTEM
+ 
+  ***************************************************************************************************************
+  ...............................................................................................................""")
+    print("""This upscale hotel is 4.2 km from the Lotus Temple and 12 km from the 12th-century Qutb Minar tower.
+The modern rooms are decorated in neutral tones and include flat-screen TVs and DVD players, plus Wi-Fi.
+All also offer separate showers and tubs. Club rooms provide access to a lounge serving free breakfast; suites add separate living areas.
+Room service is available 24/7.Parking is free. Amenities include 2 international restaurants, a cafe and a buffet grill.
+There's also a spa and fitness centre offering yoga classes, along with indoor and outdoor pools. Meeting space is also available.""")
+#Python-MySQL Connectors
+    import mysql.connector
+    conobj=mysql.connector.connect(host='localhost',user='root',password='HARSH')
+    if conobj.is_connected():
+        print("")
+    else:
+        print("error")
+    global cur
+    cur=conobj.cursor()
+    cur.execute("use hotel")
+#Account Registeration
+    global sign_up
+    sign_up=input("Create a User-Id:") #Create a User ID
+    global password
+    password=input("Create a password:") #Create User Password
+    print("-----Account successfully registered-----")
+#Check-In
+#Type of room to stay in recommendation
+    global no_of_guests
+    no_of_guests=int(input("Enter number of guests:")) #Number of guests going to stay
+    if no_of_guests<=3:
+        print("Twin/Double Room is recommended")
+    elif 3<no_of_guests<=5:
+        print("Family Room is recommended")
+    elif 5<no_of_guests<=8:
+        print("Deluxe Suite is recommended")
+    else:
+        print("Terrace Suite is recommended")
+ #Choose a room for your stay
+    print("""Rooms we offer for your stay->
+         1.Twin/Double Room(Room Tariff=Rs 4000/night)
+         2.Family Room(Room Tariff=Rs 6000/night)
+         3.Deluxe Suite(Room Tariff=Rs 10000/night)
+         4.Terrace Suite(Room Tariff=Rs 14000/night""")
+    global room_cost
+    room_cost=0
+    a="select count(room_type) from room_status"
+    cur.execute(a)
+    d=cur.fetchall()
+    for i in d:
+        c=i[0]
+        if c==50:
+            print("hotel is fully booked")#To check availibility of rooms
+            exit()
+        else:
+            print("")
+    global room_name
+    room_name=input("Enter your room type:")
+    global room_type
+    room_type=int(input("Choose a room for your stay(Enter 1/2/3/4):"))
+    if room_type==1:
+        e="select count(room_number) from room_status where room_name='{}'".format("Twin/Double Room")
+        cur.execute(e)
+        f=cur.fetchall()
+        for j in f:
+            h=j[0]
+            if h==10:
+                print("Twin/Double room not available")#To check availibility of rooms
+                exit()
+            else:
+                print("Twin/Double room is available")
+            room_cost+=4000
+            print("You have chosen Twin/Double Room for your stay at our hotel")
+    elif room_type==2:
+        k="select count(room_number) from room_status where room_name='{}'".format("Family Room")
+        cur.execute(k)
+        l=cur.fetchall()
+        for m in l:
+            n=m[0]
+            if n==10:
+                print("Family room not available")   #To check availibility of rooms
+                exit()
+            else:
+                print("Family room is available")
+            room_cost+=6000
+            print("You have chosen Family Room for your stay at our hotel")
+    elif room_type==3:
+        o="select count(room_number) from room_status where room_name='{}'".format("Deluxe Suite")
+        cur.execute(o)
+        p=cur.fetchall()
+        for q in p:
+            r=q[0]
+            if r==10:
+                print("Deluxe Suite not available")   #To check availibility of rooms
+                exit()
+            else:
+                print("Deluxe Suite room is available")
+            room_cost+=10000
+            print("You have chosen Deluxe Suite for your stay at our hotel")
+    elif room_type==4:
+        v="select count(room_number) from room_status where room_name='{}'".format("Terrace Suite")
+        cur.execute(v)
+        w=cur.fetchall()
+        for z in w:
+            y=z[0]
+            if y==10:
+                print("Terrace Suite not available")   #To check availibility of rooms
+                exit()
+            else:
+                print("Terrace Suite is available")
+            room_cost+=14000
+            print("You have chosen Terrace Suite for your stay at our hotel")
+ #To choose room preferences
+    global breakfast
+    breakfast=input("Choose Breakfast Options(Breakfast Included or Breakfast Excluded)(Additional Rs 1000 for Breakfast Included)(!!Special Offer!!:Cost not per person but per night:") #Breakfast Included/Not included
+    global view
+    view=input("Choose view Options(Sea view or City view)(Additional Rs 1000 for Sea view):") #Sea view/City view
+    global preference
+    preference=input("Choose non-smoking room or smoking room(Additional Rs 1000 for Smoking Room):") #Smoking Room/Non-Smoking Room
+    global preference_total
+    preference_total=0
+    global breakfast_cost
+    breakfast_cost=0
+    global view_cost
+    view_cost=0
+    global preference_cost
+    preference_cost=0
+    if breakfast=="Breakfast included" or breakfast=="BREAKFAST INCLUDED" or breakfast=="Breakfast Included" or breakfast=="breakfast included":
+        breakfast_cost+=1000
+    if view=="Sea view" or view=="SEA VIEW" or view=="Sea View" or view=="sea view":
+        view_cost+=1000
+    if preference=="Smoking room" or preference=="SMOKING ROOM" or preference=="Smoking Room" or preference=="smoking room":
+        preference_cost+=1000
+    preference_total=preference_cost+view_cost+breakfast_cost #Calculating total guest preference cost
+ #Guest Details
+    global guest_name
+    guest_name=input("Enter your name:")
+    global guest_DOB
+    guest_DOB=input("Enter your Date of Birth(YYYY-MM-DD):")
+    global guest_age
+    guest_age=int(input("Enter your age:"))
+    if guest_age<18:
+        print("Guests below 18 cannot book a room, Sorry!")
+        exit()
+    global guest_email
+    guest_email=input("Enter your email id:")
+    global guest_phone
+    guest_phone=int(input("Enter your phone number:+91"))
+    global guest_address
+    guest_address=input("Enter your home address:")
+    global guest_nationality
+    guest_nationality=input("Enter nationality:")
+    if guest_nationality=="Indian" or guest_nationality=="INDIAN" or guest_nationality=="indian":
+        aadhar_card_no=int(input("Enter aadhar card number:"))
+    else:
+        passport_no=int(input("Enter passport number:"))
+        visa_validity=int(input("Enter number of days your visa is valid:"))
+    global guest_nights
+    guest_nights=int(input("Enter number of nights you would wish to stay:"))
+    if guest_nights>30:
+        print("Sorry!,hotel room stay cannot exceeed 30 days")
+        check_in()
+        exit()    
+    todays_date_one= input("Enter todays date in YYYY,MM,DD format:")#To Enter Today's Date    
+    check_in_date_one=input("Enter check in date(YYYY-MM-DD):")#To Enter Checkin Date
+    check_out_date_one=input("Enter check out date(YYYY-MM-DD):")#To Enter Checkout Date
+    for ab in todays_date_one:
+        t_date=todays_date_one[-2]+todays_date_one[-1]
+        break
+    for ba in check_out_date_one:
+        f_date=check_out_date_one[-2]+check_out_date_one[-1]
+        break
+    global diff
+    diff=int(f_date)-int(t_date)
+    import random#To generate room number of guest using random module
+    global room_number
+    room_number=random.randint(0,50)
+    global guest_tariff
+    guest_tariff=room_cost+preference_total
+    global room_tariff
+    room_tariff=0
+    room_tariff=guest_nights*guest_tariff
+    print("Your room number for your booking is:", room_number)
+    tech_one=(room_name,room_number, breakfast, view, preference, check_in_date_one, check_out_date_one, todays_date_one) #Created a table room_details in MySQL for backend data storage
+    techo_one="insert into room_details values(%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(techo_one,tech_one)
+    conobj.commit()
+    stat_two=(sign_up,password,guest_name, guest_age, guest_email, guest_phone, guest_address, guest_nationality, guest_DOB) #Created a table room_details in MySQL for backend data storage
+    stat_three="insert into guest_details values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(stat_three,stat_two)
+    conobj.commit()
+    room_status="occupied"
+    status_room_number=(room_number,room_type,room_name ,room_status ,check_in_date_one ,check_out_date_one, guest_nights, todays_date_one)
+    statone="insert into room_status values(%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(statone,status_room_number) #Created a table room_status in MySQL for backend data storage
+    conobj.commit()
+def check_out():
+ import mysql.connector
+ conobj=mysql.connector.connect(host='localhost',user='root',password='GIRISH')
+ if conobj.is_connected():
+    print("")
+ else:
+    print("error")
+ cur=conobj.cursor()
+ cur.execute("use hotel")
+ check_in_date=input("Enter checkin date YYYY-MM-DD")
+ check_out_date=input("Enter checkout date YYYY-MM-DD")
+ room_no=int(input("Kindly enter your room number:"))#To Enter Room Number
+ name=input("Kindly enter your name:")
+ if room_no==room_number:    
+     sql_delete_one="DELETE FROM room_status WHERE room_number=%s"
+     sql_data_one=(room_no,)
+     cur.execute(sql_delete_one, sql_data_one)#To Delete Record (Room Status)From MySQL backend data storage after guest checks out
+     conobj.commit()
+     sql_delete_two="DELETE FROM guest_details WHERE guest_name=%s"
+     sql_data_two=(name,)
+     cur.execute(sql_delete_two, sql_data_two)#To Delete Record (Guest Details)From MySQL backend data storage after guest checks out
+     conobj.commit()
+     sql_delete_three="DELETE FROM room_details WHERE room_no=%s"
+     sql_data_three=(room_no,)
+     cur.execute(sql_delete_three, sql_data_three)#To Delete Record (Room Details)From MySQL backend data storage after guest checks out
+     conobj.commit()
+     print(""" Facilties available in our hotel->
+              1.Sports Club(Rs 850/hour)
+              2.Spa and Wellness Centre(Rs 1200/Hour)
+              3.Games Zone(Rs 700/Hour)
+              4.Swimming Pool and Gym(Free of Cost)
+              5.Conference Room for Business Meetings(Rs 2500/5 hours)
+              6.Laundry Services(Rs 50/cloth)
+              7.RVA Restaurant Buffet and Grill(Rs 2500/person)
+              8.Internet(Free of Cost)
+              9.Fax, Printing and Photocopying Services(Rs 20/paper)""")
+     print("""   Enter C for Sports Club
+             Enter W for Spa and Wellness Centre
+             Enter G for Games Zone
+             Enter S for Swimming Pool and Gym
+             Enter B for Conference Room for Business Meetings
+             Enter L for Laundry Services
+             Enter R for RVA Restaurant Buffet and Grill
+             Enter I for Internet
+             Enter F for Fax, Printing and Photocopying Services""")
+     L1=input("Enter facilities used:")   #Guest has to enter facilities used
+     facilities=0
+     sports_club_pay=0
+     spa_wellness_centre_pay=0
+     game_zone_pay=0
+     conference_meeting_pay=0
+     laundry_clothes_pay=0
+     restaurant_pay=0
+     paper_cost=0
+     facilities1=facilities2=facilities3=facilities4=facilities5=facilities6=facilities7=facilities8=facilities9=0
+     for i in range(len(L1)):
+        if L1[i]=="C":
+            sports_club_hours=int(input("Enter number of hours used in the sports club:"))
+            sports_club_pay=sports_club_hours*850
+            facilities1+=sports_club_pay
+        if L1[i]=="W":
+            spa_wellness_centre_hours=int(input("Enter number of hours used in the spa and wellness centre:"))
+            spa_wellness_centre_pay=spa_wellness_centre_hours*1200
+            facilities2+=spa_wellness_centre_pay
+        if L1[i]=="G":
+            game_zone_hours=int(input("Enter number of hours used in the game zone:"))
+            game_zone_pay=game_zone_hours*700
+            facilities3+=game_zone_pay
+        if L1[i]=="S":
+            facilities4+=0
+        if L1[i]=="B":
+            conference_meeting_hours=int(input("Enter number of times conference room for business meetings has been used/5 hours:"))
+            conference_meeting_pay=conference_meeting_hours*2500
+            facilities5+=conference_meeting_pay
+        if L1[i]=="L":
+            laundry_clothes=int(input("Enter number of clothes sent to the laundry:"))
+            laundry_clothes_pay=laundry_clothes*50
+            facilities6+=laundry_clothes_pay
+        if L1[i]=="R":
+            no_of_diners=int(input("Enter number of diners:"))
+            restaurant_pay=no_of_diners*2500
+            facilities7+=restaurant_pay
+        if L1[i]=="I":
+            facilities8+=0
+        if L1[i]=="F":
+            no_of_papers=int(input("Enter number of papers:"))
+            paper_cost=no_of_papers*20
+            facilities9+=paper_cost
+     facilities=facilities1+facilities2+facilities3+facilities4+facilities5+facilities6+facilities7+facilities8+facilities9 # Calculating total cost of facilities used by the guest
+ #Generating bill
+     print("Generating Hotel Bill.......")
+     print("Guest Details:","|","Guest Name:",guest_name,"|","Guest Date of Birth:",guest_DOB,"|","Guest Age:",guest_age,"|","Guest Email-Id:",guest_email,"|","Guest Phone number:",guest_phone,"|","Guest Home Address:",guest_address,"|","Guest Nationality:",guest_nationality,"|")
+     print("Room Details:","|","Room Type:",room_name,"|","Breakfast Preference:",breakfast,"|","View Preference:",view,"|","Room Preferences:",preference,"|","Check-In Date:",check_in_date,"|","Check-Out Date:",check_out_date,"|")
+ #Facilities used in the hotel by guests
+     print("Facilities used in the Hotel:")  
+     for i in range(len(L1)):
+        if L1[i]=="C":
+            print("Sports Club")
+        elif L1[i]=="W":
+            print("Spa and Wellness Centre")
+        elif L1[i]=="G":
+            print("Games Zone")
+        elif L1[i]=="S":
+            print("Gym and Swimming Pool")
+        elif L1[i]=="B":
+            print("Conference Room for Business Meetings")
+        elif L1[i]=="L":
+            print("Laundry Services")
+        elif L1[i]=="R":
+            print("RVA Restaurant Buffet and Grill")
+        elif L1[i]=="I":
+            print("Internet")
+        elif L1[i]=="F":
+            print("Fax, Printing and Photocopying Services")
+        else:
+            print("No Hotel Facilities Used")
+     total_cost=facilities+room_tariff
+     print("Total tariff for facilities used:Rs",facilities) #Total cost of facilities used by the guests
+     print("Kindly choose among the offers")   #Offers available for guests to choose from
+     print("""Promotions and Offers Available
+         1.Get 51% discount on Hotel Bill for Axis Bank Premium Credit Card Holders
+         2.Avail instant flat 25% discount on cost of facilities used using Promo code "FLAT 25"
+         3.Get 40% discount on Hotel Bill for SBI Platinium Credit Card Holders""")
+     offer=input("Enter offer if applicable(1/2/3):")
+     if offer=="1":
+         print("Total Tariff for Stay at our Hotel:Rs",total_cost/2,"|") #Total tariff of guests(including room stay and facilities)
+     elif offer=="2":
+         promocode=input("Enter promo code:")
+         if promocode=="FLAT 25":
+             print("Total Tariff for Stay at our Hotel:Rs",room_tariff+facilities-facilities*25/100,"|") #Total tariff of guests(including room stay and facilities)
+         else:
+             print("Invalid Promo code entered")
+             print("Total Tariff for Stay at our Hotel:Rs",total_cost,"|") #Total tariff of guests(including room stay and facilities)
+     elif offer=="3":
+         print("Total Tariff for Stay at our Hotel:Rs",total_cost-total_cost*45/100,"|") #Total tariff of guests(including room stay and facilities)
+     else:
+         print("Total Tariff for Stay at our Hotel:Rs",total_cost,"|") #Total tariff of guests(including room stay and facilities)
+ else:
+    print("Incorrect Room number entered")
+    exit()
+#Guest Feedback
+ feedback=int(input("Rate our Hotel from 1-5:"))
+ if feedback<=3:
+    print("Thank you for your valued feedback, we constantly strive to make improvements, Looking forward to welcoming you again!") #There is scope for improvement in the hotel
+ else:
+    print("Thank you for your valued feedback, Looking forward to welcoming you again!") #Proud to be the hotel's owner
+ print("""  ...............................................................................................................
+ 
+  ***************************************************************************************************************
+ 
+                                Thank you for using Sea Breeze Reservation System :)!!
+ 
+  ***************************************************************************************************************
+  ...............................................................................................................""")
+#Menu-Driven program
+ans="Yes"
+while ans=="Yes":
+    print('''              1.Check-In to Hotel
+              2.Check-Out from hotel''')
+    user_choice=input("Do you want to Check-In or Check-Out:")
+    if user_choice=="1":
+        check_in()
+    else:
+        check_out()
+        exit()
